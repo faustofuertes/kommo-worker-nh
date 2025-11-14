@@ -24,3 +24,23 @@ export async function sendMessageToLaburenAgent({ conversationId, query, visitor
     clearTimeout(t);
   }
 }
+
+export async function patchMetadata(converastionId, canal, numero) {
+  try {
+    const res = await fetch(`${BASE}/conversations/${converastionId}/metadata`, {
+      method: 'PATCH',
+      headers: {
+        "Authorization": `Bearer ${AUTHORIZATION}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ canalLead: canal, numeroLead: numero }),
+      signal: controller.signal
+    });
+
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Laburen ${res.status}: ${text}`);
+    return JSON.parse(text);
+  } catch (error) {
+    console.error(error);
+  }
+}

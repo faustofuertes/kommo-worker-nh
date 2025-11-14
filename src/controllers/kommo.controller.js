@@ -1,13 +1,13 @@
 import { parseIncoming } from "../utils/parser.js";
 import { normalizeIncomingMessage } from "../utils/normalizer.js";
-import { sendMessageToLaburenAgent } from "../services/laburen.service.js";
+import { patchMetadata, sendMessageToLaburenAgent } from "../services/laburen.service.js";
 import { getContact, addNoteToLead } from "../services/kommo.service.js";
 import { sendWppMessage } from "../services/whatsapp.services.js";
 
 const idsPausados = new Set();
 const conversationMap = new Map();
-const whiteList = ['+5491122525125', '+5492233454259', '+5493548412165', '+5493584017740', '+5493584176017', '+5493584238794', 
-  '+5493584268918', '+5493585066555', '+5493585068050', '+5493585089089', '+5493586020182',	 '+5492291527949'];
+const whiteList = ['+5491122525125', '+5492233454259', '+5493548412165', '+5493584017740', '+5493584176017', '+5493584238794',
+  '+5493584268918', '+5493585066555', '+5493585068050', '+5493585089089', '+5493586020182', '+5492291527949'];
 
 export async function kommoWebhook(req, res) {
   res.sendStatus(204); // responder rápido
@@ -26,7 +26,7 @@ export async function kommoWebhook(req, res) {
       const normalized = normalizeIncomingMessage(parsed);
       const contact = await getContact(normalized.contact_id);
       if (normalized.origin === 'waba' && whiteList.includes(contact.phone)) {
-        await processKommoMessage(normalized);
+        await processKommoMessage(normalized, contact);
         console.log('--------------------------------------------------------------------------------------------------------------------------------------------------------');
       }
 
@@ -46,7 +46,7 @@ export async function kommoWebhook(req, res) {
 
 }
 
-async function processKommoMessage(normalized) {
+async function processKommoMessage(normalized, contact) {
 
   const contact = await getContact(normalized.contact_id);
 
@@ -78,6 +78,7 @@ async function processKommoMessage(normalized) {
     conversationMap.set(normalized.contact_id, conversationId);
 
     console.log(`Nueva conversación asignada para contact_id ${normalized.contact_id}: ${conversationId}`);
+    patchMetadata(conversationId, contact.phone, normalized.origin);
   }
 
   const answer = (data?.answer || "").trim();
