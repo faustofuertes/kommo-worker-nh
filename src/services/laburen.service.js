@@ -34,7 +34,6 @@ export async function patchMetadata(converastionId, canal, numero) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ canalLead: canal, numeroLead: numero }),
-      signal: controller.signal
     });
 
     const text = await res.text();
