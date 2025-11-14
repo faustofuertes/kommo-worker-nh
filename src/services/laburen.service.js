@@ -2,7 +2,7 @@ const BASE = process.env.LABUREN_BASE_URL;
 const AGENT_ID = process.env.LABUREN_AGENT_ID;
 const AUTHORIZATION = process.env.LABUREN_AUTHORIZATION;
 
-export async function sendMessageToLaburenAgent({ conversationId, query, visitorId, metadata, timeoutMs = 15000 }) {
+export async function sendMessageToLaburenAgent({ conversationId, query, timeoutMs = 15000 }) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -13,7 +13,7 @@ export async function sendMessageToLaburenAgent({ conversationId, query, visitor
         "Authorization": `Bearer ${AUTHORIZATION}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ conversationId, query, visitorId, metadata }),
+      body: JSON.stringify({ conversationId, query }),
       signal: controller.signal,
     });
 
@@ -25,15 +25,20 @@ export async function sendMessageToLaburenAgent({ conversationId, query, visitor
   }
 }
 
-export async function patchMetadata(converastionId, canal, numero) {
+export async function patchMetadata(conversationId, canal, numero) {
   try {
-    const res = await fetch(`${BASE}/conversations/${converastionId}/metadata`, {
+    const res = await fetch(`${BASE}/conversations/${conversationId}/metadata`, {
       method: 'PATCH',
       headers: {
         "Authorization": `Bearer ${AUTHORIZATION}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ canalLead: canal, numeroLead: numero }),
+      body: JSON.stringify({
+        metadata: {
+          canal: canal,
+          numero: numero,
+        }
+      }),
     });
 
     const text = await res.text();
