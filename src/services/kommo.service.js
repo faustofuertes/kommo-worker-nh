@@ -4,19 +4,23 @@ const KOMMO_LONG_DURATION_TOKEN = process.env.KOMMO_LONG_DURATION_TOKEN;
 
 export async function getLead(leadId) {
   try {
-    const res = await axios.get(`${KOMMO_BASE_URL}/api/v4/leads/${leadId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+    const res = await axios.get(
+      `${KOMMO_BASE_URL}/api/v4/leads/${leadId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+        }
       }
-    })
+    );
 
-    const lead = res.data;
+    const lead = res.data._embedded?.leads?.[0];
+    return lead || null;
 
-    return lead;
   } catch (error) {
-    console.error("Error en getLead: ", error);
+    console.error("Error en getLead:", error?.response?.data || error);
+    return null;
   }
 }
 
