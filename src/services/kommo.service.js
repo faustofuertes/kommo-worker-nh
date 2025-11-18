@@ -81,3 +81,17 @@ export async function addNoteToLead(leadId, noteText, leadName) {
     throw error;
   }
 }
+
+export async function updateLead(leadId, customFieldId, agentResponse) {
+  try {
+    const res = await axios.post(`${KOMMO_BASE_URL}/api/v4/leads/${leadId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+      }
+    })
+  } catch (error) {
+    console.error("Error al actualizar el lead: ", error);
+  }
+}

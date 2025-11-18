@@ -24,9 +24,10 @@ export async function kommoWebhook(req, res) {
 
     const normalized = normalizeIncomingMessage(parsed);
     const contact = await getContact(normalized.contact_id);
-    
+
     const lead = getLead(normalized.element_id);
     const checkBoxValue = getCheckboxValue(lead, 1493142); /// 1493142 -> id del campo switch agente
+    console.log("Valor del checkbox ->", checkBoxValue);
 
     if (checkBoxValue === true && whiteList.includes(contact.phone)) {
       await processKommoMessage(normalized, contact);
