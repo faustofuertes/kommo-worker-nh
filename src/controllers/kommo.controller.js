@@ -1,7 +1,7 @@
 import { parseIncoming } from "../utils/parser.js";
 import { normalizeIncomingMessage } from "../utils/normalizer.js";
 import { patchMetadata, sendMessageToLaburenAgent } from "../services/laburen.service.js";
-import { getContact, addNoteToLead } from "../services/kommo.service.js";
+import { getContact, addNoteToLead, getLead } from "../services/kommo.service.js";
 import { sendWppMessage } from "../services/whatsapp.services.js";
 
 const idsPausados = new Set();
@@ -25,6 +25,10 @@ export async function kommoWebhook(req, res) {
 
       const normalized = normalizeIncomingMessage(parsed);
       const contact = await getContact(normalized.contact_id);
+
+      const lead = getLead(normalized.element_id);
+      console.log(`Nombre custom field -> ${lead.custom_fields_values.name}`);
+
       if (normalized.origin === 'waba' && whiteList.includes(contact.phone)) {
         await processKommoMessage(normalized, contact);
         console.log('--------------------------------------------------------------------------------------------------------------------------------------------------------');

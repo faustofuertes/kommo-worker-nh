@@ -8,5 +8,5 @@ const app = express();
 app.use("/kommo", kommoRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server running`);
+  console.log(`Server running 🏃`);
 });
