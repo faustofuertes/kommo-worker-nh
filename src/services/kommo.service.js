@@ -32,7 +32,6 @@ export async function getContact(contactId) {
 
     const contact = response.data;
 
-    // Nombre (viene directo en "name")
     const name = contact.name;
 
     // Número: buscar en custom_fields_values
