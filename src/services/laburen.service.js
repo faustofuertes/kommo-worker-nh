@@ -35,7 +35,6 @@ export async function patchMetadata(conversationId, canal, numero) {
       },
       body: JSON.stringify({
         metadata: {
-          conversationId: conversationId,
           canal: canal,
           numero: numero,
         }
