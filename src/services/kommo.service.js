@@ -14,7 +14,7 @@ export async function getLead(leadId) {
         }
       }
     );
-    
+
     return res.data || null;
 
   } catch (error) {
@@ -87,14 +87,52 @@ export async function addNoteToLead(leadId, noteText, leadName) {
 
 export async function updateLead(leadId, customFieldId, agentResponse) {
   try {
-    const res = await axios.post(`${KOMMO_BASE_URL}/api/v4/leads/${leadId}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+    const res = await axios.patch(
+      `${KOMMO_BASE_URL}/api/v4/leads/${leadId}`,
+      {
+        custom_fields_values: [
+          {
+            field_id: customFieldId,
+            values: [
+              { value: agentResponse }
+            ]
+          }
+        ]
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+        }
       }
-    })
+    );
+
+    return res.data;
+
   } catch (error) {
-    console.error("Error al actualizar el lead: ", error);
+    console.error("Error al actualizar el lead:", error.response?.data || error.message);
+  }
+}
+
+export async function launchSalesBot(bot_id, entity_id, entity_type) {
+  try {
+    const res = await axios.post(
+      `${KOMMO_BASE_URL}/api/v2/salesbot/run`,
+      [{
+        "bot_id": bot_id,
+        "entity_id": entity_id,
+        "entity_type": entity_type
+      }],
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${KOMMO_LONG_DURATION_TOKEN}`
+        }
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error launching bot: ", error.response?.data || error);
   }
 }
