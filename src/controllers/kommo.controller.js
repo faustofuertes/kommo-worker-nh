@@ -10,7 +10,7 @@ const KOMMO_TEXT_FIELD_ID = Number(process.env.KOMMO_TEXT_FIELD_ID);
 const KOMMO_BOT_ID = process.env.KOMMO_BOT_ID;
 
 export async function kommoWebhook(req, res) {
-  res.sendStatus(204); // responder rápido 
+  res.sendStatus(204); // responder rápido  
 
   try {
     const contentType = req.headers["content-type"] || "";
